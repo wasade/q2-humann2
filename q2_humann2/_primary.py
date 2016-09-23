@@ -73,29 +73,30 @@ def run(demultiplexed_seqs: SingleLanePerSampleSingleEndFastqDirFmt,
     from distutils.spawn import find_executable
     if find_executable('metaphlan2.py') is None:
         sys.stderr.write(("Cannot find metaphlan2.py in $PATH. Please install "
-                          "metaphlan2 prior to installing the q2-humann2 plugin "
-                          "as it is a required dependency. Details can be found "
-                          "here: https://bitbucket.org/biobakery/metaphlan2."))
+                          "metaphlan2 prior to installing the q2-humann2 "
+                          "plugin as it is a required dependency. Details can "
+                          "be found here: "
+                          "https://bitbucket.org/biobakery/metaphlan2.\n"))
         sys.exit(1)
 
-    tmp = tempfile.mkdtemp()
-    for path, view in demultiplexed_seqs.sequences.iter_views(FastqGzFormat):
-        _single_sample(str(view), threads, tmp)
+    with tempfile.TemporaryDirectory() as tmp:
+        iter_view = demultiplexed_seqs.sequences.iter_views(FastqGzFormat)
+        for path, view in iter_view:
+            _single_sample(str(view), threads, tmp)
 
-    final_tables = {}
-    for (name, method) in [('genefamilies', 'cpm'),
-                           ('pathcoverage', 'relab'),
-                           ('pathabundance', 'relab')]:
+        final_tables = {}
+        for (name, method) in [('genefamilies', 'cpm'),
+                               ('pathcoverage', 'relab'),
+                               ('pathabundance', 'relab')]:
 
-        joined_path = os.path.join(tmp, "%s.biom" % name)
-        result_path = os.path.join(tmp, "%s.%s.biom" % (name, method))
+            joined_path = os.path.join(tmp, "%s.biom" % name)
+            result_path = os.path.join(tmp, "%s.%s.biom" % (name, method))
 
-        _join_tables(tmp, joined_path, name)
-        _renorm(joined_path, method, result_path)
+            _join_tables(tmp, joined_path, name)
+            _renorm(joined_path, method, result_path)
 
-        final_tables[name] = biom.load_table(result_path)
+            final_tables[name] = biom.load_table(result_path)
 
-    #TODO: drop temp?
     return (final_tables['genefamilies'],
             final_tables['pathcoverage'],
             final_tables['pathabundance'])

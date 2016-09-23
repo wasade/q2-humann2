@@ -4,12 +4,17 @@ QIIME2 plugin for running HUMAnN2.
 
 ## Installation
 
+Q2-HUMAnN2 requires metaphlan2.py is in the ``$PATH``. Installation instructions can be found [here](https://bitbucket.org/biobakery/metaphlan2), and requires approximately a 3GB download which is not covered by the installation steps below.
+
 You can install the Q2-HUMAnN2 plugin through miniconda:
 
 ```bash
 conda create -n q2-humann2 python=3.5
 source activate q2-humann2
+conda install numpy
 pip install https://github.com/qiime2/qiime2/archive/master.zip https://github.com/qiime2/q2cli/archive/master.zip https://github.com/qiime2/q2-types/archive/master.zip https://github.com/qiime2/q2-feature-table/archive/master.zip https://github.com/wasade/q2-humann2/archive/master.zip
+humann2_databases --download uniref uniref90_ec_filtered_diamond .
+humann2_databases --download chocophlan full .
 ```
 
 ## Example
