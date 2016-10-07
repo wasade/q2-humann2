@@ -12,7 +12,7 @@ def _single_sample(sample: str, threads: int, output: str) -> None:
     """Run a single sample through humann2"""
     cmd = ["humann2", "-i", "%s" % sample, "-o", "%s" % output,
            "--threads", "%d" % threads,
-           "--output-format", "biom"]
+           "--output-format", "biom", "--remove-column-description-output"]
     subprocess.run(cmd, check=True)
 
 
@@ -31,9 +31,6 @@ def _join_tables(table: str, output: str, name: str) -> None:
     with open(output, 'w') as fp:
         fp.write('\n'.join(lines))
         fp.write('\n')
-
-    #cmd = ["biom", "convert", "-i", tmp_output, "-o", output, "--to-tsv"]
-    #subprocess.run(cmd, check=True)
 
 
 def _renorm(table: str, method: str, output: str) -> None:

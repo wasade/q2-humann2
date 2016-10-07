@@ -16,7 +16,7 @@ setup(
     version=version,
     packages=find_packages(),
     install_requires=['qiime >= 2.0.0',
-                      'humann2 >= 0.9.0, < 1.0.0',
+                      'humann2 >= 0.9.4, < 1.0.0',
                       'biom-format >= 2.1.5, < 2.2.0'],
     author="Daniel McDonald",
     author_email="wasade@gmail.com",
